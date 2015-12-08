@@ -1,0 +1,15 @@
+# {{ ansible_managed }}
+{% if postfix_drop_all_mails|default(false) %}
+localhost          :
+.localdomain       :
+
+# Drop all emails
+*                  discard
+{% endif %}
+{% if postfix_transport_maps is defined %}{% for i in postfix_transport_maps %}
+{{ i.domain }}	{{ i.transport }}
+{% endfor %}{% endif %}
+{% if postfixadmin_vacation|default(false) %}
+autoreply.{{ ansible_fqdn }}	vacation:
+{% endif %}
+

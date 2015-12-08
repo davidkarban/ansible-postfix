@@ -1,0 +1,10 @@
+---
+postfix_pkgs:
+  - postfix
+
+postfix_service: postfix
+postfix_conf_dir: "/etc/postfix/"
+postfix_chroot: 'n'
+
+dkim_port: 8891
+

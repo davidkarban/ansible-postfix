@@ -1,0 +1,18 @@
+---
+# handlers file for postfix
+- name: reload postfix
+  tags: postfix
+  action: service name=postfix state=reloaded
+
+- name: restart postfix
+  tags: postfix
+  service: name=postfix state=restarted
+
+- name: regenerate aliases
+  tags: postfix
+  command: newaliases
+
+- name: regenerate transport_map
+  tags: postfix
+  command: postmap /etc/postfix/transport
+

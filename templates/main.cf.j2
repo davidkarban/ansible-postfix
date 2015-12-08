@@ -1,0 +1,146 @@
+# {{ ansible_managed }}
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+soft_bounce = {{ postfix_opts.soft_bounce|default("no") }}
+
+{% if ansible_os_family == "Debian" %}
+# Debian specific:  Specifying a file name will cause the first
+# line of that file to be used as the name.  The Debian default
+# is /etc/mailname.
+#myorigin = /etc/mailname
+{% endif %}
+
+smtpd_banner = $myhostname ESMTP $mail_name 
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+#delay_warning_time = 4h
+{% if postfix_opts.message_size_limit|default(false) %}message_size_limit = {{ postfix_opts.message_size_limit|default("10240000") }}
+{% endif %}
+
+readme_directory = no
+
+# TLS parameters
+smtpd_tls_cert_file={{ postfix_opts.cert_file|default("/etc/ssl/certs/ssl-cert-snakeoil.pem") }}
+smtpd_tls_key_file={{ postfix_opts.key_file|default("/etc/ssl/private/ssl-cert-snakeoil.key") }}
+smtpd_tls_CAfile={{ postfix_opts.bundle_file|default("") }}
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+# TLS security hardening
+smtpd_tls_mandatory_protocols = !SSLv2,!SSLv3
+smtpd_tls_protocols = !SSLv2,!SSLv3
+smtpd_use_tls=yes
+
+smtp_tls_cert_file={{ postfix_opts.cert_file|default("/etc/ssl/certs/ssl-cert-snakeoil.pem") }}
+smtp_tls_key_file={{ postfix_opts.key_file|default("/etc/ssl/private/ssl-cert-snakeoil.key") }}
+smtp_tls_CAfile={{ postfix_opts.bundle_file|default("") }}
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+smtp_tls_protocols = !SSLv2,!SSLv3
+smtp_use_tls = yes
+
+{% if amavis|default(false) %}
+# Amavis configuration
+content_filter = smtp-amavis:[127.0.0.1]:10024
+{% endif %}
+
+# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
+# information on enabling SSL in the smtp client.
+
+myhostname = {{ postfix_fqdn }}
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+myorigin = {% if ansible_os_family == "Debian"%}/etc/mailname
+{% else %}$mydomain
+{% endif %}
+mydestination = {{ postfix_fqdn }}, localhost.localdomain, localhost.$mydomain, localhost
+relayhost = {{ postfix_relayhost|default("") }}
+transport_maps = hash:/etc/postfix/transport
+{% if postfix_relay_domains|default(false) %}relay_domains = {% for i in postfix_relay_domains %} {{ i }}, {% endfor %}
+{% endif %}
+
+mynetworks = {{ postfix_opts.mynetworks|default(ansible_default_ipv4.address + '/32') }} 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_command = procmail -a "$EXTENSION"
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = {{ postfix_opts.inet_interfaces|default("all") }}
+inet_protocols = {{ postfix_opts.inet_protocols|default("ipv4") }}
+
+# recipient restrictions
+smtpd_recipient_restrictions = 
+{% if policyd|default(false) %}	check_policy_service inet:127.0.0.1:10031,
+{% endif %}
+	permit_mynetworks, 
+{% if dovecot|default(false) %}	permit_sasl_authenticated,
+{% endif %}
+{% if postfix_mailserver|default(false) %}	reject_unauth_destination,
+	reject_rbl_client zen.spamhaus.org,
+	reject_rbl_client bl.spamcop.net,
+	reject_rbl_client cbl.abuseat.org,
+{% endif %}
+{% if postgrey|default(false) %}	check_policy_service {{ postgrey_smtpd_restriction }},
+{% endif %}
+	reject_non_fqdn_recipient,
+{% if ansible_os_family== "RedHat" and ansible_lsb.major_release|int==6 %}	reject_unauth_destination
+{% endif %}
+{% if ansible_lsb.id== "Ubuntu" and ansible_lsb.major_release|int<13 %}	reject_unauth_destination
+{% endif %}
+
+
+{% if postfixadmin|default(false) %}
+# postfixadmin configuration
+virtual_mailbox_domains = proxy:mysql:/etc/postfix/mysql/virtual_domains_maps.cf
+virtual_alias_maps =
+   proxy:mysql:/etc/postfix/mysql/virtual_alias_maps.cf,
+   proxy:mysql:/etc/postfix/mysql/virtual_alias_domain_maps.cf,
+   proxy:mysql:/etc/postfix/mysql/virtual_alias_domain_catchall_maps.cf
+virtual_mailbox_maps =
+   proxy:mysql:/etc/postfix/mysql/virtual_mailbox_maps.cf,
+   proxy:mysql:/etc/postfix/mysql/virtual_alias_domain_mailbox_maps.cf
+virtual_mailbox_base = /var/vmail/
+
+# Additional for quota support
+#virtual_create_maildirsize = yes
+#virtual_mailbox_extended = yes
+#virtual_mailbox_limit_maps = mysql:/etc/postfix/mysql/virtual_mailbox_limit_maps.cf
+#virtual_mailbox_limit_override = yes
+#virtual_maildir_limit_message = Sorry, the user's maildir has overdrawn his diskspace quota, please try again later.
+#virtual_overquota_bounce = yes
+{% endif %}
+
+{% if dovecot|default(false) %}
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+virtual_destination_recipient_limit = 1
+
+smtpd_sasl_type = dovecot
+
+# Can be an absolute path, or relative to $queue_directory
+# Debian/Ubuntu users: Postfix is setup by default to run chrooted, so it is best to leave it as-is below
+smtpd_sasl_path = private/auth
+
+# and the common settings to enable SASL:
+smtpd_sasl_auth_enable = yes
+{% endif %}
+{% if ansible_lsb.id == "Debian" and ansible_lsb.major_release|int > 6 %}
+# On Debian Wheezy path must be relative and queue_directory defined
+queue_directory = /var/spool/postfix
+{% endif %}
+
+{% if dkim_domains|default(false) %}
+# DKIM settings
+smtpd_milters = inet:localhost:{{ dkim_port }}
+non_smtpd_milters = inet:localhost:{{ dkim_port }}
+# CR LF corrections
+sendmail_fix_line_endings = always
+{% endif %}
+
+{% if smtp_servers is defined %}
+allow_min_user = yes
+#maximal_backoff_time = 300
+
+multi_instance_wrapper = ${command_directory}/postmulti -p --
+multi_instance_enable = yes
+multi_instance_directories = {% for smtp in smtp_servers %} {{ '/etc/postfix-' + smtp.ip }} {% endfor %}
+{% endif %}
+

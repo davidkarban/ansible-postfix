@@ -1,0 +1,54 @@
+---
+# tasks file for postfix
+- name: Load the OS specific variables
+  tags: postfix
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install the postfix packages in Redhat derivates
+  tags: postfix
+  yum: name={{ item }} state=present
+  with_items: postfix_pkgs
+  when: ansible_os_family == 'RedHat'
+
+- name: Install the postfix packages in Debian derivates
+  tags: postfix
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time=600
+  with_items: postfix_pkgs
+  environment:
+    # prevent postfix from autostart after installation
+    RUNLEVEL: 1
+  when: ansible_os_family == 'Debian'
+
+- name: Load postfix configuration files
+  tags: postfix
+  template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }}
+          owner=root group=root mode=0644 backup=yes
+  with_items:
+    - main.cf
+    - master.cf
+  notify:
+    - restart postfix
+
+- name: Load /etc/mailname on Debian systems
+  tags: postfix
+  template: src=mailname.j2 dest=/etc/mailname owner=root group=root mode=0644
+  notify: regenerate aliases
+  when: ansible_os_family == 'Debian'
+
+- name: Load aliases file
+  tags: postfix
+  template: src=aliases.{{ ansible_os_family }}.j2 dest=/etc/aliases owner=root group=root mode=644 backup=yes
+  notify: regenerate aliases
+
+- name: Load aditional configuration
+  tags: postfix
+  template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }}
+  with_items:
+    - transport
+  notify: 
+    - regenerate transport_map
+
+- name: Ensure postfix is running.
+  tags: postfix
+  service: name={{ postfix_service }} state=started enabled=yes
+

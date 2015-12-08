@@ -1,0 +1,12 @@
+---
+postfix_pkgs:
+  - postfix
+  - postfix-mysql
+  - postfix-pcre
+
+postfix_service: postfix
+postfix_conf_dir: "/etc/postfix/"
+postfix_chroot: '-'
+
+dkim_port: 12345
+

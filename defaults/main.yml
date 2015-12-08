@@ -1,0 +1,6 @@
+---
+# defaults file for postfix
+postfix: true
+
+postfix_fqdn: "{{ ansible_fqdn }}"
+
