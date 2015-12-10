@@ -4,7 +4,7 @@ postfix: true
 
 postfix_fqdn: "{{ ansible_fqdn }}"
 
-postfix_tls_cert_file: {{ postfix_default_tls_cert_file }}
-postfix_tls_key_file: {{ postfix_default_tls_key_file }}
+postfix_tls_cert_file: "{{ postfix_default_tls_cert_file }}"
+postfix_tls_key_file: "{{ postfix_default_tls_key_file }}"
 
 
