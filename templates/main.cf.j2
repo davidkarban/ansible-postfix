@@ -24,8 +24,8 @@ append_dot_mydomain = no
 readme_directory = no
 
 # TLS parameters
-smtpd_tls_cert_file={{ postfix_opts.cert_file|default("/etc/ssl/certs/ssl-cert-snakeoil.pem") }}
-smtpd_tls_key_file={{ postfix_opts.key_file|default("/etc/ssl/private/ssl-cert-snakeoil.key") }}
+smtpd_tls_cert_file={{ postfix_tls_cert_file }}
+smtpd_tls_key_file={{ postfix_tls_key_file }}
 smtpd_tls_CAfile={{ postfix_opts.bundle_file|default("") }}
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 # TLS security hardening
@@ -33,8 +33,8 @@ smtpd_tls_mandatory_protocols = !SSLv2,!SSLv3
 smtpd_tls_protocols = !SSLv2,!SSLv3
 smtpd_use_tls=yes
 
-smtp_tls_cert_file={{ postfix_opts.cert_file|default("/etc/ssl/certs/ssl-cert-snakeoil.pem") }}
-smtp_tls_key_file={{ postfix_opts.key_file|default("/etc/ssl/private/ssl-cert-snakeoil.key") }}
+smtp_tls_cert_file={{ postfix_tls_cert_file }}
+smtp_tls_key_file={{ postfix_tls_key_file }}
 smtp_tls_CAfile={{ postfix_opts.bundle_file|default("") }}
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 smtp_tls_protocols = !SSLv2,!SSLv3
