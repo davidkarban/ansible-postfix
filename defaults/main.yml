@@ -9,3 +9,6 @@ postfix_tls_key_file: "{{ postfix_default_tls_key_file }}"
 
 postfix_opts: []
 
+# default my destination, usually postfix_fqdn.
+postfix_mydestination: "{{ postfix_fqdn }}"
+
