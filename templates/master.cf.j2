@@ -73,7 +73,7 @@ lmtp      unix  -       -       {{ postfix_chroot }}       -       -       lmtp
 anvil     unix  -       -       {{ postfix_chroot }}       -       1       anvil
 scache    unix  -       -       {{ postfix_chroot }}       -       1       scache
 
-{% if dovecot_eee|default(false) %}
+{% if dovecot|default(false) %}
 dovecot unix - n n - - pipe
   flags=DRhu user=vmail:vmail argv=/usr/lib/dovecot/deliver -f ${sender} -d ${recipient}
 {% endif %}
