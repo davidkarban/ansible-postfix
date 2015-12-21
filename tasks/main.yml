@@ -44,7 +44,7 @@
   tags: postfix
   template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }}
   with_items:
-    - transport
+    - "transport"
   notify: 
     - regenerate transport_map
 
