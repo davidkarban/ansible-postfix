@@ -18,7 +18,7 @@ append_dot_mydomain = no
 
 # Uncomment the next line to generate "delayed mail" warnings
 #delay_warning_time = 4h
-{% if postfix_opts.message_size_limit|default(false) %}message_size_limit = {{ postfix_opts.message_size_limit|default("10240000") }}
+{% if postfix_message_size_limit|default(false) %}message_size_limit = {{ postfix_message_size_limit|default("10240000") }}
 {% endif %}
 
 readme_directory = no
