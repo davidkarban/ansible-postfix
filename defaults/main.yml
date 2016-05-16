@@ -9,9 +9,10 @@ postfix_tls_key_file: "{{ postfix_default_tls_key_file }}"
 
 # default my destination, usually postfix_fqdn.
 postfix_mydestination: "{{ postfix_fqdn }}"
-postfix_mynetworks: "{{ postfix_opts.mynetworks|default(ansible_default_ipv4.address + '/32') }}"
+postfix_mynetworks: "{{ postfix_opts.mynetworks }}"
 
 # _opts are deprecated, will be removed in time, use postfix_ variables (up from here)
 postfix_opts:
-  mynetworks: "{{ ansible_default_ipv4.address + '/32') }}"
+  mynetworks: 
+    - "{{ ansible_default_ipv4.address + '/32' }}"
 
