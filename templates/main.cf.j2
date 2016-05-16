@@ -60,7 +60,7 @@ transport_maps = hash:/etc/postfix/transport
 {% if postfix_relay_domains|default(false) %}relay_domains = {% for i in postfix_relay_domains %} {{ i }}, {% endfor %}
 {% endif %}
 
-mynetworks = {% for mynetwork in postfix_mynetworks %}{{ network + ' ' }}{% endfor %}127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mynetworks = {% for mynetwork in postfix_mynetworks %}{{ mynetwork + ' ' }}{% endfor %}127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 mailbox_command = procmail -a "$EXTENSION"
 mailbox_size_limit = 0
 recipient_delimiter = +
