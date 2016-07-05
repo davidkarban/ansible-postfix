@@ -12,7 +12,10 @@
   tags: postfix
   command: newaliases
 
-- name: regenerate transport_map
+- name: regenerate maps
   tags: postfix
-  command: postmap /etc/postfix/transport
+  command: "{{ item }}"
+  with_items: 
+    - postmap /etc/postfix/transport
+    - postmap /etc/postfix/relay_password
 

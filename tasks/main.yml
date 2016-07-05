@@ -42,11 +42,12 @@
 
 - name: Load aditional configuration
   tags: postfix
-  template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }}
+  template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }} owner=root group=root mode=0600
   with_items:
     - "transport"
+    - "relay_password"
   notify: 
-    - regenerate transport_map
+    - regenerate maps
 
 - name: Ensure postfix is running.
   tags: postfix
