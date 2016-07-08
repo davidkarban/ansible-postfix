@@ -56,7 +56,7 @@ myorigin = {% if ansible_os_family == "Debian"%}/etc/mailname
 {% endif %}
 mydestination = {% if postfix_mydestination %}{{ postfix_mydestination }}, {% endif %}localhost.localdomain, localhost.$mydomain, localhost
 relayhost = {{ postfix_relayhost|default("") }}
-{% if postfix_relayhost_username and postfix_relayhost_password is defined %}
+{% if postfix_relayhost_username is defined and postfix_relayhost_password is defined %}
 smtp_sasl_auth_enable = yes  
 smtp_sasl_password_maps = hash:/etc/postfix/relay_password 
 smtp_sasl_security_options =  
