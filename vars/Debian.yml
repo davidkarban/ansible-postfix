@@ -3,6 +3,8 @@ postfix_pkgs:
   - postfix
   - postfix-mysql
   - postfix-pcre
+  # for sasl auth when relaying thru passworded relayhost
+  - libsasl2-modules
 
 postfix_service: postfix
 postfix_conf_dir: "/etc/postfix/"

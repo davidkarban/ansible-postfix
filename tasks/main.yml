@@ -7,13 +7,13 @@
 - name: Install the postfix packages in Redhat derivates
   tags: postfix
   yum: name={{ item }} state=present
-  with_items: postfix_pkgs
+  with_items: '{{ postfix_pkgs }}'
   when: ansible_os_family == 'RedHat'
 
 - name: Install the postfix packages in Debian derivates
   tags: postfix
   apt: name={{ item }} state=present update_cache=yes cache_valid_time=600
-  with_items: postfix_pkgs
+  with_items: '{{ postfix_pkgs }}'
   environment:
     # prevent postfix from autostart after installation
     RUNLEVEL: 1
@@ -42,11 +42,12 @@
 
 - name: Load aditional configuration
   tags: postfix
-  template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }}
+  template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }} owner=root group=root mode=0600
   with_items:
     - "transport"
+    - "relay_password"
   notify: 
-    - regenerate transport_map
+    - regenerate maps
 
 - name: Ensure postfix is running.
   tags: postfix

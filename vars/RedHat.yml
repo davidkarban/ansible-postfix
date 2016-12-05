@@ -1,6 +1,10 @@
 ---
 postfix_pkgs:
   - postfix
+  # for sasl auth when relaying thru passworded relayhost
+  - cyrus-sasl
+  - cyrus-sasl-lib
+  - cyrus-sasl-plain
 
 postfix_service: postfix
 postfix_conf_dir: "/etc/postfix/"
