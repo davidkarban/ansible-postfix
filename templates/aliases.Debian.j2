@@ -15,7 +15,7 @@ clamav: root
 logcheck: root
 
 root: {% if postfix_admin_email is iterable and postfix_admin_email is not string %}
-{% for email in postfix_admin_email %}{{ email }}{% if not loop.last %},{% endif %}{% endfor %}
+{% for email in postfix_admin_email %}{{ email }}{% if not loop.last %}, {% endif %}{% endfor %}
 {% else %}{{ postfix_admin_email }}
 {% endif %}
 
