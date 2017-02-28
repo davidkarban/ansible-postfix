@@ -37,10 +37,10 @@
 
 - name: Load aliases file
   tags: postfix
-  template: src={{ item }}.j2 dest=/etc/aliases owner=root group=root mode=644 backup=yes
+  template: src={{ item }} dest=/etc/aliases owner=root group=root mode=644 backup=yes
   with_first_found:
-    - "aliases.{{ ansible_os_family }}"
-    - "aliases"
+    - "aliases.{{ ansible_os_family }},j2"
+    - "aliases.j2"
   notify: regenerate aliases
 
 - name: Load aditional configuration
