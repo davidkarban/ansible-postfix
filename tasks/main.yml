@@ -21,8 +21,16 @@
 
 - name: Load postfix configuration files
   tags: postfix
-  template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }}
-          owner=root group=root mode=0644 backup=yes
+  template: 
+    src: "{{ item + '.j2' }}"
+    dest: "/etc/postfix/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+    setype: postfix_etc_t
+    serole: object_r
+    seuser: system_u
+    backup: yes
   with_items:
     - main.cf
     - master.cf
@@ -37,7 +45,16 @@
 
 - name: Load aliases file
   tags: postfix
-  template: src={{ item }} dest=/etc/aliases owner=root group=root mode=644 backup=yes
+  template:
+    src: "{{ item }}"
+    dest: "/etc/aliases"
+    owner: "root"
+    group: "root"
+    mode: 0644
+    setype: etc_aliases_t
+    serole: object_r
+    seuser: system_u
+    backup: yes
   with_first_found:
     - "aliases.{{ ansible_os_family }},j2"
     - "aliases.j2"
