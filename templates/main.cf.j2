@@ -33,6 +33,9 @@ smtpd_tls_mandatory_protocols = !SSLv2,!SSLv3
 smtpd_tls_protocols = !SSLv2,!SSLv3
 smtpd_use_tls=yes
 
+# stop sending message delivery succeeded, generates spam when message sent by spammers
+smtpd_discard_ehlo_keywords = silent-discard, dsn
+
 smtp_tls_cert_file={{ postfix_tls_cert_file }}
 smtp_tls_key_file={{ postfix_tls_key_file }}
 smtp_tls_CAfile={{ postfix_opts.bundle_file|default("") }}
