@@ -55,7 +55,7 @@ myhostname = {{ postfix_fqdn }}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 myorigin = {% if ansible_os_family == "Debian"%}/etc/mailname
-{% elif %}$mydomain
+{% else %}$mydomain
 {% endif %}
 mydestination = {% if postfix_mydestination %}{{ postfix_mydestination }}, {% endif %}localhost.localdomain, localhost.$mydomain, localhost
 relayhost = {{ postfix_relayhost|default("") }}
