@@ -10,7 +10,5 @@ postfix_service: postfix
 postfix_conf_dir: "/etc/postfix/"
 postfix_chroot: 'n'
 
-dkim_port: 8891
-
 postfix_default_tls_cert_file: "/etc/pki/tls/certs/localhost.crt"
 postfix_default_tls_key_file: "/etc/pki/tls/private/localhost.key"

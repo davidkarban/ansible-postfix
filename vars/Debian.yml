@@ -10,8 +10,6 @@ postfix_service: postfix
 postfix_conf_dir: "/etc/postfix/"
 postfix_chroot: '-'
 
-dkim_port: 12345
-
 postfix_default_tls_cert_file: "/etc/ssl/certs/ssl-cert-snakeoil.pem"
 postfix_default_tls_key_file: "/etc/ssl/private/ssl-cert-snakeoil.key"
 
