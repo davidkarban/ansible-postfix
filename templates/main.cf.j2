@@ -23,6 +23,14 @@ append_dot_mydomain = no
 
 readme_directory = no
 
+{% if postfix_version.stdout|int >= 3 %}
+# See http://www.postfix.org/COMPATIBILITY_README.html -- default to 2 on
+# fresh installs.
+compatibility_level = 2
+{% endif %}
+
+
+
 # TLS parameters
 smtpd_tls_cert_file={{ postfix_tls_cert_file }}
 smtpd_tls_key_file={{ postfix_tls_key_file }}

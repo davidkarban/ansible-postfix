@@ -1,23 +1,18 @@
 ---
 # tasks file for postfix
 - name: Load the OS specific variables
-  tags: postfix
   include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Install the postfix packages in Redhat derivates
-  tags: postfix
-  yum: name={{ item }} state=present
-  with_items: '{{ postfix_pkgs }}'
-  when: ansible_os_family == 'RedHat'
+- name: Install postfix packages
+  package: 
+    name: '{{ postfix_pkgs }}'
+    state: present
 
-- name: Install the postfix packages in Debian derivates
-  tags: postfix
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time=600
-  with_items: '{{ postfix_pkgs }}'
-  environment:
-    # prevent postfix from autostart after installation
-    RUNLEVEL: 1
-  when: ansible_os_family == 'Debian'
+- name: Get postfix version
+  check_mode: false
+  changed_when: false
+  shell: 'postconf mail_version | sed -e "s/mail_version = \([0-9]\)\.\([0-9]\)\.\([0-9]\{1,2\}\).*/\1/"'
+  register: postfix_version
 
 - name: Load postfix configuration files
   tags: postfix
