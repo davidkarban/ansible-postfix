@@ -33,6 +33,11 @@
   notify:
     - restart postfix
 
+- name: Build the index file
+  check_mode: false
+  changed_when: false
+  shell: 'postmap /etc/postfix/relay_by_sender'
+
 - name: Load /etc/mailname on Debian systems
   tags: postfix
   template: src=mailname.j2 dest=/etc/mailname owner=root group=root mode=0644
