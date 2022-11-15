@@ -161,3 +161,7 @@ multi_instance_enable = yes
 multi_instance_directories = {% for smtp in smtp_servers %} {{ '/etc/postfix-' + smtp.ip }} {% endfor %}
 {% endif %}
 
+{% if postfix_sender_dependent_relayhost_maps|length > 0 %}
+sender_dependent_relayhost_maps = hash:/etc/postfix/sender_dependent_relayhost_maps
+{% endif %}
+

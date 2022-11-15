@@ -29,6 +29,7 @@
   with_items:
     - main.cf
     - master.cf
+    - relay_by_sender
   notify:
     - restart postfix
 
