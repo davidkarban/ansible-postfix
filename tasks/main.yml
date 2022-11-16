@@ -29,8 +29,14 @@
   with_items:
     - main.cf
     - master.cf
+    - relay_by_sender
   notify:
     - restart postfix
+
+- name: Build the index file
+  check_mode: false
+  changed_when: false
+  shell: 'postmap /etc/postfix/relay_by_sender'
 
 - name: Load /etc/mailname on Debian systems
   tags: postfix
