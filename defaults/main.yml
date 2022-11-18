@@ -24,4 +24,9 @@ postfix_opts:
   mynetworks: 
     - "{{ ansible_default_ipv4.address + '/32' }}"
 
+# List of objects, e. g.
+#  - sender: "@domain.eu"
+#    username: "info@domain.eu"
+#    password: "PASSWORD"
+#    relayhost: "[send.smtp.com]:465"
 postfix_sender_dependent_relayhost_maps: []
