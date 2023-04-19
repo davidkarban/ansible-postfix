@@ -69,8 +69,9 @@ mydestination = {% if postfix_mydestination %}{{ postfix_mydestination }}, {% en
 relayhost = {{ postfix_relayhost|default("") }}
 {% if postfix_relayhost_username is defined and postfix_relayhost_password is defined %}
 smtp_sasl_auth_enable = yes  
-smtp_sasl_password_maps = hash:/etc/postfix/relay_password 
-smtp_sasl_security_options =  
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_mechanism_filter = plain, login
+smtp_sasl_security_options = noanonymous
 {% endif %}
 
 transport_maps = hash:/etc/postfix/transport
@@ -162,6 +163,5 @@ multi_instance_directories = {% for smtp in smtp_servers %} {{ '/etc/postfix-' +
 {% endif %}
 
 {% if postfix_sender_dependent_relayhost_maps|length > 0 %}
-sender_dependent_relayhost_maps = hash:/etc/postfix/relay_by_sender
+sender_dependent_relayhost_maps = hash:/etc/postfix/sender_relay
 {% endif %}
-

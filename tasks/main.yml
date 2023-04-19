@@ -29,14 +29,14 @@
   with_items:
     - main.cf
     - master.cf
-    - relay_by_sender
+    - sender_relay
   notify:
     - restart postfix
 
 - name: Build the index file
   check_mode: false
   changed_when: false
-  shell: 'postmap /etc/postfix/relay_by_sender'
+  shell: 'postmap /etc/postfix/sender_relay'
 
 - name: Load /etc/mailname on Debian systems
   tags: postfix
@@ -66,11 +66,10 @@
   template: src={{ item + '.j2' }} dest=/etc/postfix/{{ item }} owner=root group=root mode=0600
   with_items:
     - "transport"
-    - "relay_password"
+    - "sasl_passwd"
   notify: 
     - regenerate maps
 
 - name: Ensure postfix is running.
   tags: postfix
   service: name={{ postfix_service }} state=started enabled=yes
-

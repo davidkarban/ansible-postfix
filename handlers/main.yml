@@ -17,5 +17,5 @@
   command: "{{ item }}"
   with_items: 
     - postmap /etc/postfix/transport
-    - postmap /etc/postfix/relay_password
+    - postmap /etc/postfix/sasl_passwd
 
