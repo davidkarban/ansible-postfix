@@ -29,14 +29,8 @@
   with_items:
     - main.cf
     - master.cf
-    - sender_relay
   notify:
     - restart postfix
-
-- name: Build the index file
-  check_mode: false
-  changed_when: false
-  shell: 'postmap /etc/postfix/sender_relay'
 
 - name: Load /etc/mailname on Debian systems
   tags: postfix
@@ -67,6 +61,7 @@
   with_items:
     - "transport"
     - "sasl_passwd"
+    - "sender_relay"
   notify: 
     - regenerate maps
 

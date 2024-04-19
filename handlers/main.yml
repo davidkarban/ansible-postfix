@@ -18,4 +18,5 @@
   with_items: 
     - postmap /etc/postfix/transport
     - postmap /etc/postfix/sasl_passwd
+    - postmap /etc/postfix/sender_relay
 
